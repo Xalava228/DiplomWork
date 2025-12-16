@@ -16,14 +16,9 @@
     // Инициализация при загрузке DOM
     // ============================================
     
-<<<<<<< HEAD
     document.addEventListener('DOMContentLoaded', async function() {
         initSmoothScroll();
         await loadDynamicData();
-=======
-    document.addEventListener('DOMContentLoaded', function() {
-        initSmoothScroll();
->>>>>>> 3e3d861d85e662b00c00686df66ba0b2164f0151
         initScrollAnimations();
         initMobileMenu();
         initNewsSlider();
@@ -33,7 +28,6 @@
     });
 
     // ============================================
-<<<<<<< HEAD
     // Динамическая загрузка тренеров и новостей
     // ============================================
 
@@ -482,8 +476,6 @@
     }
 
     // ============================================
-=======
->>>>>>> 3e3d861d85e662b00c00686df66ba0b2164f0151
     // Плавный скролл до якорей
     // ============================================
     
@@ -623,7 +615,6 @@
         const prevBtn = document.querySelector('.news__arrow--prev');
         const nextBtn = document.querySelector('.news__arrow--next');
         const newsList = document.querySelector('.news__list');
-<<<<<<< HEAD
         const newsTrack = document.querySelector('.news__track');
         
         if (!prevBtn || !nextBtn || !newsList) return;
@@ -638,12 +629,6 @@
             newsList.style.transform = 'translateX(0px)';
             return;
         }
-=======
-        const newsCards = document.querySelectorAll('.news-card');
-        const newsTrack = document.querySelector('.news__track');
-        
-        if (!prevBtn || !nextBtn || !newsList || newsCards.length === 0) return;
->>>>>>> 3e3d861d85e662b00c00686df66ba0b2164f0151
         
         // Количество карточек, видимых одновременно
         const cardsPerView = 3;
@@ -766,47 +751,7 @@
     // ============================================
     
     function initScheduleFilters() {
-<<<<<<< HEAD
         // Фильтры создаются динамически в loadScheduleData, здесь дополнительной логики не требуется
-=======
-        const filters = document.querySelectorAll('.schedule__filter');
-        const scheduleCells = document.querySelectorAll('.schedule__cell');
-        
-        if (filters.length === 0) return;
-        
-        filters.forEach(filter => {
-            filter.addEventListener('click', function() {
-                // Убираем активный класс со всех фильтров
-                filters.forEach(f => f.classList.remove('schedule__filter--active'));
-                // Добавляем активный класс к текущему фильтру
-                this.classList.add('schedule__filter--active');
-                
-                const filterType = this.getAttribute('data-type');
-                const filterHall = this.getAttribute('data-hall');
-                
-                // Показываем/скрываем ячейки в зависимости от фильтра
-                scheduleCells.forEach(cell => {
-                    if (filterType === 'combat') {
-                        // Показываем только ячейки с боевым самбо
-                        if (cell.classList.contains('schedule__cell--combat')) {
-                            cell.style.display = 'table-cell';
-                        } else if (!cell.classList.contains('schedule__cell--rest')) {
-                            cell.style.opacity = '0.3';
-                        }
-                    } else if (filterHall) {
-                        // Логика фильтрации по залам (заглушка)
-                        // В реальном проекте здесь была бы более сложная логика
-                        cell.style.opacity = '1';
-                        cell.style.display = 'table-cell';
-                    } else {
-                        // Показываем все ячейки
-                        cell.style.opacity = '1';
-                        cell.style.display = 'table-cell';
-                    }
-                });
-            });
-        });
->>>>>>> 3e3d861d85e662b00c00686df66ba0b2164f0151
     }
 
     // ============================================

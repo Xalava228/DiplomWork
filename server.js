@@ -1,5 +1,4 @@
 const express = require('express');
-<<<<<<< HEAD
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const helmet = require('helmet');
@@ -8,14 +7,10 @@ const path = require('path');
 const fs = require('fs');
 const fsPromises = require('fs/promises');
 const { v4: uuidv4 } = require('uuid');
-=======
-const path = require('path');
->>>>>>> 3e3d861d85e662b00c00686df66ba0b2164f0151
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-<<<<<<< HEAD
 const DATA_DIR = path.join(__dirname, 'data');
 const TRAINERS_FILE = path.join(DATA_DIR, 'trainers.json');
 const NEWS_FILE = path.join(DATA_DIR, 'news.json');
@@ -505,23 +500,11 @@ app.get('*', (req, res) => {
 
 bootstrapData()
     .then(() => {
-app.listen(PORT, () => {
-    console.log(`Сервер запущен на порту ${PORT}`);
+        app.listen(PORT, () => {
+            console.log(`Сервер запущен на порту ${PORT}`);
         });
     })
     .catch((err) => {
         console.error('Ошибка инициализации данных', err);
         process.exit(1);
-=======
-// Раздаём статические файлы
-app.use(express.static(path.join(__dirname)));
-
-// Все маршруты ведут на index.html (для SPA)
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-app.listen(PORT, () => {
-    console.log(`Сервер запущен на порту ${PORT}`);
->>>>>>> 3e3d861d85e662b00c00686df66ba0b2164f0151
-});
+    });
