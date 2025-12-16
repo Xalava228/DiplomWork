@@ -104,7 +104,7 @@ button {
    ============================================ */
 
 .container {
-    max-width: 1400px;
+    max-width: 1180px;
     margin: 0 auto;
     padding: 0 var(--spacing-md);
 }
@@ -126,9 +126,9 @@ button {
     top: -20px;
     left: 50%;
     transform: translateX(-50%);
-    width: 60px;
-    height: 4px;
-    background: var(--gradient-accent);
+    width: 48px;
+    height: 3px;
+    background: var(--color-primary);
     border-radius: var(--radius-full);
 }
 
@@ -138,11 +138,11 @@ button {
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 100px;
-    height: 4px;
-    background: var(--gradient-accent);
+    width: 80px;
+    height: 3px;
+    background: var(--color-primary);
     border-radius: var(--radius-full);
-    box-shadow: 0 2px 8px rgba(227, 30, 36, 0.3);
+    box-shadow: 0 2px 8px rgba(34, 77, 154, 0.2);
 }
 
 /* Кнопки */
@@ -369,9 +369,29 @@ button {
     right: 0;
     bottom: 0;
     background: 
-        radial-gradient(circle at 20% 50%, rgba(227, 30, 36, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(34, 77, 154, 0.4) 0%, transparent 50%);
+        radial-gradient(circle at 20% 30%, rgba(227, 30, 36, 0.35) 0%, transparent 45%),
+        radial-gradient(circle at 80% 70%, rgba(34, 77, 154, 0.5) 0%, transparent 50%),
+        radial-gradient(circle at 50% 100%, rgba(0, 0, 0, 0.3) 0%, transparent 60%);
     z-index: 1;
+}
+
+.hero::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(255, 255, 255, 0.015) 2px,
+            rgba(255, 255, 255, 0.015) 4px
+        );
+    z-index: 1;
+    pointer-events: none;
 }
 
 .hero__overlay {
@@ -380,8 +400,7 @@ button {
     left: 0;
     right: 0;
     bottom: 0;
-    background: var(--gradient-hero);
-    opacity: 0.7;
+    background: linear-gradient(135deg, rgba(15, 40, 70, 0.85) 0%, rgba(34, 77, 154, 0.75) 50%, rgba(20, 50, 90, 0.85) 100%);
     z-index: 1;
 }
 
@@ -399,33 +418,32 @@ button {
     font-weight: 700;
     margin-bottom: var(--spacing-md);
     text-transform: uppercase;
-    -webkit-background-clip: text;
-    background-clip: text;
+    letter-spacing: 3px;
+    text-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
     position: relative;
 }
 
-.hero__title::after {
-    content: 'ФЕДЕРАЦИЯ САМБО «ВИТЯЗЬ»';
+.hero__title::before {
+    content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    color: #ffffff;
-    -webkit-background-clip: text;
-    background-clip: text;
-    z-index: -1;
-    filter: blur(2px);
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+    border-radius: var(--radius-full);
 }
 
 .hero__subtitle {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 400;
-    max-width: 800px;
-    margin: 0 auto var(--spacing-lg);
-    line-height: 1.9;
+    max-width: 680px;
+    margin: var(--spacing-md) auto var(--spacing-md);
+    line-height: 1.8;
     opacity: 0.95;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    letter-spacing: 0.5px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.3px;
 }
 
 .hero__cta {
@@ -442,7 +460,109 @@ button {
 
 .about {
     padding: var(--spacing-xl) 0;
-    background-color: var(--color-background);
+    background: linear-gradient(180deg, #f0f4f8 0%, #e8eef5 100%);
+    position: relative;
+}
+
+.about::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(34, 77, 154, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(227, 30, 36, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* ============================================
+   Блок статистики / Достижения
+   ============================================ */
+
+.stats {
+    padding: var(--spacing-lg) 0;
+    background: var(--gradient-primary);
+    position: relative;
+    overflow: hidden;
+}
+
+.stats::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 20px,
+            rgba(255, 255, 255, 0.02) 20px,
+            rgba(255, 255, 255, 0.02) 40px
+        );
+    pointer-events: none;
+}
+
+.stats::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(227, 30, 36, 0.2) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.stats__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-lg);
+    position: relative;
+    z-index: 1;
+}
+
+.stats__item {
+    text-align: center;
+    color: var(--color-white);
+    padding: var(--spacing-md);
+    position: relative;
+}
+
+.stats__item::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 60%;
+    background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+}
+
+.stats__item:last-child::after {
+    display: none;
+}
+
+.stats__number {
+    display: block;
+    font-size: 56px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: var(--spacing-xs);
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.stats__label {
+    display: block;
+    font-size: 16px;
+    font-weight: 500;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .about__content {
@@ -508,8 +628,22 @@ button {
 
 .advantages {
     padding: var(--spacing-xl) 0;
-    background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 50%, #ffffff 100%);
+    background: #ffffff;
     position: relative;
+}
+
+.advantages::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        linear-gradient(90deg, rgba(34, 77, 154, 0.02) 1px, transparent 1px),
+        linear-gradient(rgba(34, 77, 154, 0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
 }
 
 .advantages__grid {
@@ -519,14 +653,14 @@ button {
 }
 
 .advantage-card {
-    background-color: var(--color-white);
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
     border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 4px 20px rgba(34, 77, 154, 0.1);
     transition: all var(--transition-base);
     opacity: 0;
     transform: translateY(30px);
-    border: 1px solid rgba(34, 77, 154, 0.1);
+    border: 1px solid rgba(34, 77, 154, 0.08);
     position: relative;
 }
 
@@ -537,10 +671,19 @@ button {
     left: 0;
     right: 0;
     height: 4px;
-    background: var(--gradient-primary);
+    background: var(--gradient-accent);
     transform: scaleX(0);
     transform-origin: left;
     transition: transform var(--transition-base);
+    z-index: 2;
+}
+
+.advantage-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 60%, rgba(34, 77, 154, 0.03) 100%);
+    pointer-events: none;
     z-index: 1;
 }
 
@@ -550,8 +693,8 @@ button {
 }
 
 .advantage-card:hover {
-    transform: translateY(-12px) scale(1.02);
-    box-shadow: var(--shadow-xl);
+    transform: translateY(-10px);
+    box-shadow: 0 12px 40px rgba(34, 77, 154, 0.18);
     border-color: var(--color-primary);
 }
 
@@ -614,7 +757,21 @@ button {
 
 .halls {
     padding: var(--spacing-xl) 0;
-    background-color: var(--color-background);
+    background: linear-gradient(180deg, #f8f9fa 0%, #eef2f7 50%, #f8f9fa 100%);
+    position: relative;
+}
+
+.halls::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 0% 50%, rgba(34, 77, 154, 0.05) 0%, transparent 30%),
+        radial-gradient(circle at 100% 50%, rgba(227, 30, 36, 0.05) 0%, transparent 30%);
+    pointer-events: none;
 }
 
 .halls__grid {
@@ -624,26 +781,30 @@ button {
 }
 
 .hall-card {
-    background-color: var(--color-white);
+    background: #ffffff;
     border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 4px 24px rgba(34, 77, 154, 0.12);
     transition: all var(--transition-base);
     opacity: 0;
     transform: translateY(30px);
-    border: 1px solid rgba(34, 77, 154, 0.1);
+    border: 1px solid rgba(34, 77, 154, 0.08);
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
-.hall-card::after {
+.hall-card::before {
     content: '';
     position: absolute;
-    inset: 0;
-    background: var(--gradient-primary);
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--gradient-accent);
     opacity: 0;
     transition: opacity var(--transition-base);
-    z-index: 1;
-    pointer-events: none;
+    z-index: 2;
 }
 
 .hall-card.visible {
@@ -652,13 +813,13 @@ button {
 }
 
 .hall-card:hover {
-    transform: translateY(-12px) scale(1.02);
-    box-shadow: var(--shadow-xl);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(34, 77, 154, 0.2);
     border-color: var(--color-primary);
 }
 
-.hall-card:hover::after {
-    opacity: 0.05;
+.hall-card:hover::before {
+    opacity: 1;
 }
 
 .hall-card__image {
@@ -680,6 +841,10 @@ button {
 
 .hall-card__content {
     padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    flex: 1;
 }
 
 .hall-card__title {
@@ -713,8 +878,55 @@ button {
 
 .coaches {
     padding: var(--spacing-xl) 0;
-    background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 50%, #ffffff 100%);
+    background: linear-gradient(135deg, #0f2847 0%, #1a3d6e 50%, #224D9A 100%);
     position: relative;
+    overflow: hidden;
+}
+
+.coaches::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(227, 30, 36, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 40%);
+    pointer-events: none;
+}
+
+.coaches::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        repeating-linear-gradient(
+            -45deg,
+            transparent,
+            transparent 30px,
+            rgba(255, 255, 255, 0.01) 30px,
+            rgba(255, 255, 255, 0.01) 60px
+        );
+    pointer-events: none;
+}
+
+.coaches .section-title {
+    color: var(--color-white);
+}
+
+.coaches .section-title::before,
+.coaches .section-title::after {
+    background: linear-gradient(135deg, #E31E24 0%, #ff4d52 100%);
+}
+
+.coaches .empty-message {
+    color: rgba(255, 255, 255, 0.7);
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .coaches__grid {
@@ -724,14 +936,20 @@ button {
 }
 
 .coach-card {
-    background-color: var(--color-white);
-    border-radius: 8px;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%);
+    border-radius: var(--radius-lg);
     padding: var(--spacing-md);
     text-align: center;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all var(--transition-base);
     opacity: 0;
     transform: translateY(30px);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    position: relative;
+    z-index: 1;
 }
 
 .coach-card.visible {
@@ -740,8 +958,8 @@ button {
 }
 
 .coach-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
 }
 
 .coach-card__photo {
@@ -815,9 +1033,25 @@ button {
 
 .news {
     padding: var(--spacing-xl) 0;
-    background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 50%, #ffffff 100%);
+    background: #ffffff;
     position: relative;
     overflow: visible;
+}
+
+.news::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        linear-gradient(135deg, rgba(34, 77, 154, 0.02) 25%, transparent 25%),
+        linear-gradient(225deg, rgba(34, 77, 154, 0.02) 25%, transparent 25%),
+        linear-gradient(45deg, rgba(34, 77, 154, 0.02) 25%, transparent 25%),
+        linear-gradient(315deg, rgba(34, 77, 154, 0.02) 25%, transparent 25%);
+    background-size: 40px 40px;
+    pointer-events: none;
 }
 
 .news__slider {
@@ -900,6 +1134,8 @@ button {
     border: 1px solid rgba(34, 77, 154, 0.1);
     position: relative;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 
@@ -917,6 +1153,10 @@ button {
 
 .news-card__content {
     padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    flex: 1;
 }
 
 .news-card__date {
@@ -949,8 +1189,55 @@ button {
 
 .schedule {
     padding: var(--spacing-xl) 0;
-    background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 50%, #ffffff 100%);
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
     position: relative;
+    overflow: hidden;
+}
+
+.schedule::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 90% 10%, rgba(227, 30, 36, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 10% 90%, rgba(34, 77, 154, 0.15) 0%, transparent 40%);
+    pointer-events: none;
+}
+
+.schedule::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 100px,
+            rgba(255, 255, 255, 0.02) 100px,
+            rgba(255, 255, 255, 0.02) 101px
+        );
+    pointer-events: none;
+}
+
+.schedule .section-title {
+    color: var(--color-white);
+}
+
+.schedule .section-title::before,
+.schedule .section-title::after {
+    background: linear-gradient(135deg, #E31E24 0%, #ff4d52 100%);
+}
+
+.schedule .empty-message {
+    color: rgba(255, 255, 255, 0.7);
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .schedule__filters {
@@ -1111,7 +1398,21 @@ button {
 
 .contacts {
     padding: var(--spacing-xl) 0;
-    background-color: var(--color-background);
+    background: linear-gradient(180deg, #f0f4f8 0%, #e8eef5 50%, #f0f4f8 100%);
+    position: relative;
+}
+
+.contacts::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 100% 0%, rgba(34, 77, 154, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 0% 100%, rgba(227, 30, 36, 0.06) 0%, transparent 40%);
+    pointer-events: none;
 }
 
 .contacts__content {
@@ -1243,6 +1544,21 @@ button {
 .contact-form__group {
     margin-bottom: var(--spacing-md);
     position: relative;
+}
+
+.contact-form__note {
+    min-height: 18px;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    margin: 4px 0 var(--spacing-sm);
+}
+
+.contact-form__note--success {
+    color: #1b9e4b;
+}
+
+.contact-form__note--error {
+    color: #e53935;
 }
 
 .contact-form__input,
@@ -1635,6 +1951,18 @@ button {
         --spacing-lg: 40px;
     }
     
+    .stats__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stats__item:nth-child(2)::after {
+        display: none;
+    }
+    
+    .stats__number {
+        font-size: 44px;
+    }
+    
     .about__content,
     .contacts__content,
     .footer__content {
@@ -1707,6 +2035,23 @@ button {
         --spacing-xl: 50px;
         --spacing-lg: 32px;
         --spacing-md: 20px;
+    }
+    
+    .stats__grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+    }
+    
+    .stats__item::after {
+        display: none;
+    }
+    
+    .stats__number {
+        font-size: 40px;
+    }
+    
+    .stats__label {
+        font-size: 13px;
     }
     
     .header__nav {
@@ -1970,6 +2315,32 @@ button {
         --spacing-lg: 24px;
         --spacing-md: 16px;
         --spacing-sm: 12px;
+    }
+    
+    .stats {
+        padding: var(--spacing-md) 0;
+    }
+    
+    .stats__grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+    }
+    
+    .stats__item {
+        padding: var(--spacing-sm);
+    }
+    
+    .stats__item::after {
+        display: none;
+    }
+    
+    .stats__number {
+        font-size: 32px;
+    }
+    
+    .stats__label {
+        font-size: 11px;
+        letter-spacing: 0.5px;
     }
     
     .header {

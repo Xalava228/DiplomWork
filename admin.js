@@ -151,16 +151,35 @@
         }
     }
 
+    async function uploadFile(file) {
+        const fd = new FormData();
+        fd.append('file', file);
+        const response = await fetch('/api/upload', {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: fd
+        });
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({}));
+            throw new Error(error.message || 'Не удалось загрузить файл');
+        }
+        const data = await response.json();
+        return data.url;
+    }
+
     async function handleTrainerSubmit(event) {
         event.preventDefault();
         const formData = new FormData(trainerForm);
+
+        let photoUrl = formData.get('photoUrl')?.trim();
+        const photoFile = formData.get('photoFile');
 
         const payload = {
             name: formData.get('name')?.trim(),
             position: formData.get('position')?.trim(),
             experience: formData.get('experience')?.trim(),
             badges: formData.get('badges')?.split(',').map(b => b.trim()).filter(Boolean) || [],
-            photoUrl: formData.get('photoUrl')?.trim()
+            photoUrl
         };
 
         if (!payload.name || !payload.position) {
@@ -169,6 +188,10 @@
         }
 
         try {
+            if (photoFile && photoFile.size > 0) {
+                payload.photoUrl = await uploadFile(photoFile);
+            }
+
             const response = await fetch('/api/trainers', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -194,12 +217,15 @@
         event.preventDefault();
         const formData = new FormData(newsForm);
 
+        let imageUrl = formData.get('imageUrl')?.trim();
+        const imageFile = formData.get('imageFile');
+
         const payload = {
             title: formData.get('title')?.trim(),
             date: formData.get('date'),
             category: formData.get('category')?.trim(),
             text: formData.get('text')?.trim(),
-            imageUrl: formData.get('imageUrl')?.trim()
+            imageUrl
         };
 
         if (!payload.date || !payload.category || !payload.text) {
@@ -208,6 +234,10 @@
         }
 
         try {
+            if (imageFile && imageFile.size > 0) {
+                payload.imageUrl = await uploadFile(imageFile);
+            }
+
             const response = await fetch('/api/news', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -233,11 +263,14 @@
         event.preventDefault();
         const formData = new FormData(hallForm);
 
+        let imageUrl = formData.get('imageUrl')?.trim();
+        const imageFile = formData.get('imageFile');
+
         const payload = {
             name: formData.get('name')?.trim(),
             address: formData.get('address')?.trim(),
             description: formData.get('description')?.trim(),
-            imageUrl: formData.get('imageUrl')?.trim()
+            imageUrl
         };
 
         if (!payload.name || !payload.address) {
@@ -246,6 +279,10 @@
         }
 
         try {
+            if (imageFile && imageFile.size > 0) {
+                payload.imageUrl = await uploadFile(imageFile);
+            }
+
             const response = await fetch('/api/halls', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

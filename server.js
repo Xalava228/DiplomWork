@@ -1,8 +1,13 @@
+// Загружаем переменные окружения из .env файла
+require('dotenv').config();
+
 const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const multer = require('multer');
+const nodemailer = require('nodemailer');
 const path = require('path');
 const fs = require('fs');
 const fsPromises = require('fs/promises');
@@ -18,6 +23,16 @@ const HALLS_FILE = path.join(DATA_DIR, 'halls.json');
 const SCHEDULE_FILE = path.join(DATA_DIR, 'schedule.json');
 const CONTACTS_FILE = path.join(DATA_DIR, 'contacts.json');
 const SOCIALS_FILE = path.join(DATA_DIR, 'socials.json');
+const LEADS_FILE = path.join(DATA_DIR, 'leads.json');
+const UPLOADS_DIR = path.join(__dirname, 'uploads');
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+const SMTP_HOST = process.env.SMTP_HOST;
+const SMTP_PORT = process.env.SMTP_PORT;
+const SMTP_USER = process.env.SMTP_USER;
+const SMTP_PASS = process.env.SMTP_PASS;
+const SMTP_SECURE = process.env.SMTP_SECURE === 'true';
+const LEADS_EMAIL_TO = process.env.LEADS_EMAIL_TO;
 
 const SESSION_SECRET = process.env.SESSION_SECRET || 'change-me-session-secret';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
@@ -30,6 +45,7 @@ const initialHalls = require('./data/halls.json');
 const initialSchedule = require('./data/schedule.json');
 const initialContacts = require('./data/contacts.json');
 const initialSocials = require('./data/socials.json');
+const initialLeads = [];
 
 function resolveAdminPasswordHash() {
     if (ADMIN_PASSWORD_HASH) {
@@ -65,6 +81,90 @@ async function ensureDataFile(filePath, defaultValue) {
     }
 }
 
+async function ensureUploadsDir() {
+    await fsPromises.mkdir(UPLOADS_DIR, { recursive: true });
+}
+
+async function notifyTelegram(message) {
+    if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
+    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+    const body = {
+        chat_id: TELEGRAM_CHAT_ID,
+        text: message,
+        parse_mode: 'HTML'
+    };
+    try {
+        await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+    } catch (err) {
+        console.error('Не удалось отправить в Telegram', err);
+    }
+}
+
+function createMailTransport() {
+    if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS) {
+        console.warn('⚠️ SMTP не настроен. Проверь переменные окружения в .env файле:');
+        console.warn('   SMTP_HOST:', SMTP_HOST || 'НЕ ЗАДАН');
+        console.warn('   SMTP_PORT:', SMTP_PORT || 'НЕ ЗАДАН');
+        console.warn('   SMTP_USER:', SMTP_USER || 'НЕ ЗАДАН');
+        console.warn('   SMTP_PASS:', SMTP_PASS ? '***' : 'НЕ ЗАДАН');
+        return null;
+    }
+    return nodemailer.createTransport({
+        host: SMTP_HOST,
+        port: Number(SMTP_PORT),
+        secure: SMTP_SECURE,
+        auth: {
+            user: SMTP_USER,
+            pass: SMTP_PASS
+        }
+    });
+}
+
+const mailTransport = createMailTransport();
+
+if (mailTransport) {
+    console.log('✅ SMTP настроен:', SMTP_HOST, ':', SMTP_PORT);
+    console.log('   Отправка на:', LEADS_EMAIL_TO || 'НЕ ЗАДАН');
+} else {
+    console.log('❌ SMTP не настроен. Заявки не будут отправляться на email.');
+}
+
+async function notifyEmail(lead) {
+    if (!mailTransport) {
+        console.warn('⚠️ Пропуск отправки email: SMTP не настроен');
+        return;
+    }
+    if (!LEADS_EMAIL_TO) {
+        console.warn('⚠️ Пропуск отправки email: LEADS_EMAIL_TO не задан');
+        return;
+    }
+    const subject = `Новая заявка: ${lead.name || 'без имени'}`;
+    const html = `
+        <h3>Новая заявка</h3>
+        <p><strong>Имя:</strong> ${lead.name || ''}</p>
+        <p><strong>Телефон:</strong> ${lead.phone || ''}</p>
+        ${lead.message ? `<p><strong>Сообщение:</strong> ${lead.message}</p>` : ''}
+        <p><small>Создано: ${lead.createdAt}</small></p>
+    `;
+    try {
+        const info = await mailTransport.sendMail({
+            from: SMTP_USER,
+            to: LEADS_EMAIL_TO,
+            subject,
+            html
+        });
+        console.log('✅ Email отправлен успешно:', info.messageId);
+    } catch (err) {
+        console.error('❌ Ошибка отправки email:', err.message);
+        if (err.code) console.error('   Код ошибки:', err.code);
+        if (err.response) console.error('   Ответ сервера:', err.response);
+    }
+}
+
 async function bootstrapData() {
     await ensureDataFile(TRAINERS_FILE, initialTrainers);
     await ensureDataFile(NEWS_FILE, initialNews);
@@ -72,6 +172,8 @@ async function bootstrapData() {
     await ensureDataFile(SCHEDULE_FILE, initialSchedule);
     await ensureDataFile(CONTACTS_FILE, initialContacts);
     await ensureDataFile(SOCIALS_FILE, initialSocials);
+    await ensureDataFile(LEADS_FILE, initialLeads);
+    await ensureUploadsDir();
 }
 
 function requireAdmin(req, res, next) {
@@ -91,8 +193,23 @@ async function writeJson(filePath, data) {
 }
 
 app.use(helmet({
-    contentSecurityPolicy: false, // CSP нужно настраивать отдельно под ресурсы, пока отключаем
-    crossOriginEmbedderPolicy: false
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "https:", "'unsafe-inline'"],
+            styleSrc: ["'self'", "https:", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https:"],
+            fontSrc: ["'self'", "https:", "data:"],
+            connectSrc: ["'self'", "https:"],
+            frameSrc: ["'self'", "https:"],
+            objectSrc: ["'none'"],
+            baseUri: ["'self'"],
+            frameAncestors: ["'self'"],
+            upgradeInsecureRequests: []
+        }
+    },
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: 'same-origin' }
 }));
 
 app.use(express.json({ limit: '200kb' }));
@@ -110,6 +227,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 app.use(session({
+    name: 'sambo.sid',
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
@@ -136,12 +254,41 @@ const adminWriteLimiter = rateLimit({
     legacyHeaders: false,
 });
 
+const contactLimiter = rateLimit({
+    windowMs: 5 * 60 * 1000,
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
 // Блокируем прямой доступ к папке с данными
 app.use('/data', (_req, res) => res.status(404).json({ message: 'Не найдено' }));
 
 // Раздача статики
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
+app.use('/uploads', express.static(UPLOADS_DIR));
 app.use(express.static(__dirname));
+
+// ---------- Загрузка файлов (изображения) ----------
+const storage = multer.diskStorage({
+    destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
+    filename: (_req, file, cb) => {
+        const ext = (path.extname(file.originalname || '').toLowerCase() || '').slice(0, 5);
+        cb(null, `${Date.now()}-${uuidv4()}${ext}`);
+    }
+});
+
+const upload = multer({
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: (_req, file, cb) => {
+        if (file.mimetype && file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE', 'file'));
+        }
+    }
+});
 
 // ---------- Аутентификация ----------
 app.post('/api/login', loginLimiter, async (req, res) => {
@@ -432,6 +579,52 @@ app.get('/api/contacts', async (_req, res) => {
         console.error('Ошибка при получении контактов', error);
         res.status(500).json({ message: 'Не удалось загрузить контакты' });
     }
+});
+
+// ---------- Заявки на тренировку ----------
+app.post('/api/leads', contactLimiter, async (req, res) => {
+    const { name, phone, message } = req.body || {};
+
+    if (!name || !phone) {
+        return res.status(400).json({ message: 'Имя и телефон обязательны' });
+    }
+
+    const lead = {
+        id: uuidv4(),
+        name: sanitizeString(name, 100),
+        phone: sanitizeString(phone, 80),
+        message: sanitizeString(message || '', 600),
+        createdAt: new Date().toISOString()
+    };
+
+    try {
+        const text = [
+            '📨 <b>Новая заявка</b>',
+            `Имя: ${lead.name}`,
+            `Телефон: ${lead.phone}`,
+            lead.message ? `Сообщение: ${lead.message}` : ''
+        ].filter(Boolean).join('\n');
+        await notifyTelegram(text);
+        await notifyEmail(lead);
+
+        const leads = await readJson(LEADS_FILE);
+        leads.unshift(lead);
+        leads.splice(200);
+        await writeJson(LEADS_FILE, leads);
+        return res.json({ ok: true });
+    } catch (error) {
+        console.error('Ошибка при сохранении заявки', error);
+        return res.status(500).json({ message: 'Не удалось отправить заявку' });
+    }
+});
+
+// ---------- Загрузка изображений ----------
+app.post('/api/upload', requireAdmin, adminWriteLimiter, upload.single('file'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ message: 'Файл не получен' });
+    }
+    const url = `/uploads/${req.file.filename}`;
+    return res.json({ url });
 });
 
 app.post('/api/contacts', requireAdmin, adminWriteLimiter, async (req, res) => {

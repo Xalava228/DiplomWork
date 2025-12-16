@@ -760,6 +760,7 @@
     
     function initContactForm() {
         const form = document.getElementById('contactForm');
+        const statusNode = form?.querySelector('[data-contact-status]');
         
         if (!form) return;
         
@@ -845,6 +846,10 @@
             e.preventDefault();
             
             let isValid = true;
+            if (statusNode) {
+                statusNode.textContent = '';
+                statusNode.classList.remove('contact-form__note--success', 'contact-form__note--error');
+            }
             
             // Проверка имени
             if (nameInput) {
@@ -868,16 +873,45 @@
                 }
             }
             
-            // Если форма валидна, отправляем данные (заглушка)
+            // Если форма валидна, отправляем данные
             if (isValid) {
-                // Здесь должна быть отправка данных на сервер
-                // Для демо просто показываем сообщение
-                alert('Спасибо! Ваша заявка принята. Мы свяжемся с вами в ближайшее время.');
-                form.reset();
-                
-                // Очищаем все ошибки
-                form.querySelectorAll('.contact-form__input, .contact-form__textarea').forEach(input => {
-                    clearError(input);
+                const payload = {
+                    name: nameInput?.value.trim(),
+                    phone: phoneInput?.value.trim(),
+                    message: messageTextarea?.value.trim()
+                };
+
+                fetch('/api/leads', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                })
+                .then(async response => {
+                    if (!response.ok) {
+                        const error = await response.json().catch(() => ({}));
+                        throw new Error(error.message || 'Не удалось отправить заявку');
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    if (statusNode) {
+                        statusNode.textContent = 'Спасибо! Ваша заявка принята.';
+                        statusNode.classList.add('contact-form__note--success');
+                    } else {
+                        alert('Спасибо! Ваша заявка принята.');
+                    }
+                    form.reset();
+                    form.querySelectorAll('.contact-form__input, .contact-form__textarea').forEach(input => {
+                        clearError(input);
+                    });
+                })
+                .catch(err => {
+                    if (statusNode) {
+                        statusNode.textContent = err.message || 'Сервер недоступен. Попробуйте позже.';
+                        statusNode.classList.add('contact-form__note--error');
+                    } else {
+                        alert(err.message || 'Сервер недоступен. Попробуйте позже.');
+                    }
                 });
             } else {
                 // Прокручиваем к первой ошибке
