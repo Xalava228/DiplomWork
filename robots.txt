@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /data/
+Disallow: /uploads/
+
+Sitemap: https://yourdomain.com/sitemap.xml
+
+
+

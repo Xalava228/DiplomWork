@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель — Федерация самбо «Витязь»</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="container">
+            <div class="topbar__content">
+                <div>
+                    <p class="eyebrow">Федерация самбо «Витязь»</p>
+                    <h1 class="title">Административная панель</h1>
+                </div>
+                <a class="link" href="/" aria-label="Вернуться на сайт">← На сайт</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="loginSection" class="card">
+            <h2>Вход администратора</h2>
+            <p class="muted">Доступ только для сотрудников. Пароль хранится на сервере, данные не отправляются третьим лицам.</p>
+            <form id="loginForm" class="form-grid">
+                <label class="field">
+                    <span>Пароль</span>
+                    <input type="password" name="password" required autocomplete="current-password" placeholder="Введите пароль">
+                </label>
+                <button type="submit" class="btn">Войти</button>
+                <p id="loginError" class="error" aria-live="polite"></p>
+            </form>
+        </section>
+
+        <section id="dashboardSection" class="card card--wide hidden">
+            <div class="card__header">
+                <div>
+                    <p class="eyebrow">Режим администратора</p>
+                    <h2>Управление сайтом</h2>
+                    <p class="muted">Добавляйте тренеров и новости. Данные сохраняются на сервере.</p>
+                </div>
+                <div class="actions">
+                    <button id="logoutBtn" class="btn btn--ghost">Выйти</button>
+                </div>
+            </div>
+
+            <div id="statusBar" class="status hidden" role="status" aria-live="polite"></div>
+
+            <div class="grid">
+                <div class="card card--sub">
+                    <div class="card__header">
+                        <div>
+                            <p class="eyebrow">Тренеры</p>
+                            <h3>Добавить тренера</h3>
+                        </div>
+                    </div>
+                    <form id="trainerForm" class="form-grid">
+                        <label class="field">
+                            <span>Имя</span>
+                            <input type="text" name="name" required placeholder="Например, Иван Иванов">
+                        </label>
+                        <label class="field">
+                            <span>Должность</span>
+                            <input type="text" name="position" required placeholder="Тренер по боевому самбо">
+                        </label>
+                        <label class="field">
+                            <span>Опыт</span>
+                            <input type="text" name="experience" placeholder="Опыт работы: 5 лет">
+                        </label>
+                        <label class="field">
+                            <span>Бейджи (через запятую)</span>
+                            <input type="text" name="badges" placeholder="Мастер спорта, Призёр России">
+                        </label>
+                        <label class="field">
+                            <span>Фото (URL)</span>
+                            <input type="url" name="photoUrl" placeholder="https://...">
+                        </label>
+                        <label class="field">
+                            <span>Или загрузите файл</span>
+                            <input type="file" name="photoFile" accept="image/*">
+                        </label>
+                        <button type="submit" class="btn">Сохранить тренера</button>
+                    </form>
+
+                    <div class="list">
+                        <div class="list__header">
+                            <h4>Текущий состав</h4>
+                            <span id="trainersCount" class="badge">0</span>
+                        </div>
+                        <div id="trainersList" class="list__items muted">Загрузка...</div>
+                    </div>
+                </div>
+
+                <div class="card card--sub">
+                    <div class="card__header">
+                        <div>
+                            <p class="eyebrow">Новости</p>
+                            <h3>Добавить новость</h3>
+                        </div>
+                    </div>
+                    <form id="newsForm" class="form-grid">
+                        <label class="field">
+                            <span>Заголовок (необязательно)</span>
+                            <input type="text" name="title" placeholder="Например, Итоги соревнований">
+                        </label>
+                        <label class="field">
+                            <span>Дата</span>
+                            <input type="date" name="date" required>
+                        </label>
+                        <label class="field">
+                            <span>Категория</span>
+                            <input type="text" name="category" required placeholder="Соревнования">
+                        </label>
+                        <label class="field">
+                            <span>Текст</span>
+                            <textarea name="text" rows="3" required placeholder="Короткое описание"></textarea>
+                        </label>
+                        <label class="field">
+                            <span>Изображение (URL)</span>
+                            <input type="url" name="imageUrl" placeholder="https://...">
+                        </label>
+                        <label class="field">
+                            <span>Или загрузите файл</span>
+                            <input type="file" name="imageFile" accept="image/*">
+                        </label>
+                        <button type="submit" class="btn">Сохранить новость</button>
+                    </form>
+
+                    <div class="list">
+                        <div class="list__header">
+                            <h4>Опубликованные новости</h4>
+                            <span id="newsCount" class="badge">0</span>
+                        </div>
+                        <div id="newsList" class="list__items muted">Загрузка...</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="grid">
+                <div class="card card--sub">
+                    <div class="card__header">
+                        <div>
+                            <p class="eyebrow">Залы</p>
+                            <h3>Добавить зал</h3>
+                        </div>
+                    </div>
+                    <form id="hallForm" class="form-grid">
+                        <label class="field">
+                            <span>Название</span>
+                            <input type="text" name="name" required placeholder="Главный зал">
+                        </label>
+                        <label class="field">
+                            <span>Адрес</span>
+                            <input type="text" name="address" required placeholder="ул. Нагорная, 4к1">
+                        </label>
+                        <label class="field">
+                            <span>Описание</span>
+                            <textarea name="description" rows="3" placeholder="Краткое описание зала"></textarea>
+                        </label>
+                        <label class="field">
+                            <span>Изображение (URL)</span>
+                            <input type="url" name="imageUrl" placeholder="https://...">
+                        </label>
+                        <label class="field">
+                            <span>Или загрузите файл</span>
+                            <input type="file" name="imageFile" accept="image/*">
+                        </label>
+                        <button type="submit" class="btn">Сохранить зал</button>
+                    </form>
+
+                    <div class="list">
+                        <div class="list__header">
+                            <h4>Залы</h4>
+                            <span id="hallsCount" class="badge">0</span>
+                        </div>
+                        <div id="hallsList" class="list__items muted">Загрузка...</div>
+                    </div>
+                </div>
+
+                <div class="card card--sub">
+                    <div class="card__header">
+                        <div>
+                            <p class="eyebrow">Расписание</p>
+                            <h3>Добавить занятие</h3>
+                        </div>
+                    </div>
+                    <form id="scheduleForm" class="form-grid">
+                        <label class="field">
+                            <span>День</span>
+                            <select name="day" required>
+                                <option value="">Выберите день</option>
+                                <option value="ПН">ПН</option>
+                                <option value="ВТ">ВТ</option>
+                                <option value="СР">СР</option>
+                                <option value="ЧТ">ЧТ</option>
+                                <option value="ПТ">ПТ</option>
+                                <option value="СБ">СБ</option>
+                                <option value="ВС">ВС</option>
+                            </select>
+                        </label>
+                        <label class="field">
+                            <span>Время</span>
+                            <input type="text" name="time" required placeholder="16:00">
+                        </label>
+                        <label class="field">
+                            <span>Описание (группа)</span>
+                            <input type="text" name="label" required placeholder="Взрослые">
+                        </label>
+                        <label class="field">
+                            <span>Тип</span>
+                            <select name="type">
+                                <option value="other">Общее</option>
+                                <option value="adults">Взрослые</option>
+                                <option value="children">Дети</option>
+                                <option value="combat">Боевое самбо</option>
+                                <option value="rest">Выходной</option>
+                            </select>
+                        </label>
+                        <label class="field">
+                            <span>Зал/локация (необязательно)</span>
+                            <input type="text" name="hall" placeholder="Например, Нагорная">
+                        </label>
+                        <button type="submit" class="btn">Сохранить занятие</button>
+                    </form>
+
+                    <div class="list">
+                        <div class="list__header">
+                            <h4>Расписание</h4>
+                            <span id="scheduleCount" class="badge">0</span>
+                        </div>
+                        <div id="scheduleList" class="list__items muted">Загрузка...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="card card--sub">
+                    <div class="card__header">
+                        <div>
+                            <p class="eyebrow">Контакты</p>
+                            <h3>Обновить контакты</h3>
+                        </div>
+                    </div>
+                    <form id="contactsForm" class="form-grid">
+                        <label class="field">
+                            <span>Адрес</span>
+                            <textarea name="address" rows="2" placeholder="Адрес клуба"></textarea>
+                        </label>
+                        <label class="field">
+                            <span>Телефоны (через запятую)</span>
+                            <input type="text" name="phones" placeholder="+7 999 000-00-00, +7 999 111-11-11">
+                        </label>
+                        <label class="field">
+                            <span>Email</span>
+                            <input type="email" name="email" placeholder="info@domain.ru">
+                        </label>
+                        <button type="submit" class="btn">Сохранить контакты</button>
+                    </form>
+                    <div class="list">
+                        <div class="list__header">
+                            <h4>Текущие контакты</h4>
+                        </div>
+                        <div id="contactsPreview" class="list__items muted">Загрузка...</div>
+                    </div>
+                </div>
+
+                <div class="card card--sub">
+                    <div class="card__header">
+                        <div>
+                            <p class="eyebrow">Соцсети</p>
+                            <h3>Обновить ссылки</h3>
+                        </div>
+                    </div>
+                    <form id="socialsForm" class="form-grid">
+                        <label class="field">
+                            <span>ВКонтакте</span>
+                            <input type="url" name="vk" placeholder="https://vk.com/...">
+                        </label>
+                        <label class="field">
+                            <span>Telegram</span>
+                            <input type="url" name="telegram" placeholder="https://t.me/...">
+                        </label>
+                        <label class="field">
+                            <span>Instagram</span>
+                            <input type="url" name="instagram" placeholder="https://instagram.com/...">
+                        </label>
+                        <button type="submit" class="btn">Сохранить ссылки</button>
+                    </form>
+                    <div class="list">
+                        <div class="list__header">
+                            <h4>Текущие ссылки</h4>
+                        </div>
+                        <div id="socialsPreview" class="list__items muted">Загрузка...</div>
+                    </div>
+                </div>
+
+                <div class="card card--sub">
+                    <div class="card__header">
+                        <div>
+                            <p class="eyebrow">Заявки на тренировку</p>
+                            <h3>Уведомления о заявках</h3>
+                            <p class="muted">Заявки отправляются только в Telegram/WhatsApp, на сервере не сохраняются. Настройте уведомления в .env файле.</p>
+                        </div>
+                    </div>
+                    <div class="list">
+                        <div class="list__items">
+                            <p>✅ Заявки отправляются в:</p>
+                            <ul style="margin-top: 8px; padding-left: 20px;">
+                                <li>Telegram (если настроен TELEGRAM_BOT_TOKEN и TELEGRAM_CHAT_ID)</li>
+                                <li>WhatsApp (если настроен WHATSAPP_API_KEY и WHATSAPP_PHONE)</li>
+                                <li>Email (если настроен SMTP)</li>
+                            </ul>
+                            <p style="margin-top: 16px; color: #666;">См. инструкции в файлах TELEGRAM_SETUP.md и env.example.txt</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="admin.js"></script>
+</body>
+</html>
+
+
