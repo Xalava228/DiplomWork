@@ -30,6 +30,7 @@
     const socialsPreview = document.getElementById('socialsPreview');
 
     const statusBar = document.getElementById('statusBar');
+<<<<<<< HEAD
     
     let csrfToken = null;
 
@@ -55,6 +56,8 @@
         
         return options;
     }
+=======
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 
     document.addEventListener('DOMContentLoaded', init);
 
@@ -100,9 +103,13 @@
     async function checkSession() {
         try {
             const response = await fetch('/api/admin/session', { credentials: 'same-origin' });
+<<<<<<< HEAD
             const { isAdmin, csrfToken: token } = await response.json();
             
             csrfToken = token;
+=======
+            const { isAdmin } = await response.json();
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 
             if (isAdmin) {
                 showDashboard();
@@ -160,6 +167,7 @@
                 return;
             }
 
+<<<<<<< HEAD
             const result = await response.json();
             loginForm.reset();
             showStatus('Успешный вход. Сессия активна на 12 часов.', 'success');
@@ -183,6 +191,12 @@
             
             // Проверяем сессию после логина
             await checkSession();
+=======
+            loginForm.reset();
+            showStatus('Успешный вход. Сессия активна на 12 часов.', 'success');
+            showDashboard();
+            await Promise.all([loadTrainers(), loadNews(), loadHalls(), loadSchedule(), loadContacts()]);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         } catch (error) {
             loginError.textContent = 'Сервер недоступен. Попробуйте позже.';
         }
@@ -200,6 +214,7 @@
     async function uploadFile(file) {
         const fd = new FormData();
         fd.append('file', file);
+<<<<<<< HEAD
         const options = {
             method: 'POST',
             credentials: 'same-origin',
@@ -209,6 +224,13 @@
             options.headers = { 'X-CSRF-Token': csrfToken };
         }
         const response = await fetch('/api/upload', options);
+=======
+        const response = await fetch('/api/upload', {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: fd
+        });
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         if (!response.ok) {
             const error = await response.json().catch(() => ({}));
             throw new Error(error.message || 'Не удалось загрузить файл');
@@ -242,7 +264,16 @@
                 payload.photoUrl = await uploadFile(photoFile);
             }
 
+<<<<<<< HEAD
             const response = await fetch('/api/trainers', getFetchOptions('POST', payload));
+=======
+            const response = await fetch('/api/trainers', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify(payload)
+            });
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 
             if (!response.ok) {
                 const error = await response.json();
@@ -283,7 +314,16 @@
                 payload.imageUrl = await uploadFile(imageFile);
             }
 
+<<<<<<< HEAD
             const response = await fetch('/api/news', getFetchOptions('POST', payload));
+=======
+            const response = await fetch('/api/news', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify(payload)
+            });
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 
             if (!response.ok) {
                 const error = await response.json();
@@ -323,7 +363,16 @@
                 payload.imageUrl = await uploadFile(imageFile);
             }
 
+<<<<<<< HEAD
             const response = await fetch('/api/halls', getFetchOptions('POST', payload));
+=======
+            const response = await fetch('/api/halls', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify(payload)
+            });
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 
             if (!response.ok) {
                 const error = await response.json();
@@ -357,7 +406,16 @@
         }
 
         try {
+<<<<<<< HEAD
             const response = await fetch('/api/schedule', getFetchOptions('POST', payload));
+=======
+            const response = await fetch('/api/schedule', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify(payload)
+            });
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 
             if (!response.ok) {
                 const error = await response.json();
@@ -385,7 +443,16 @@
         };
 
         try {
+<<<<<<< HEAD
             const response = await fetch('/api/contacts', getFetchOptions('POST', payload));
+=======
+            const response = await fetch('/api/contacts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify(payload)
+            });
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 
             if (!response.ok) {
                 const error = await response.json();
@@ -410,7 +477,16 @@
         };
 
         try {
+<<<<<<< HEAD
             const response = await fetch('/api/socials', getFetchOptions('POST', payload));
+=======
+            const response = await fetch('/api/socials', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify(payload)
+            });
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 
             if (!response.ok) {
                 const error = await response.json();
@@ -489,7 +565,14 @@
     async function deleteTrainer(id) {
         if (!confirm('Удалить тренера?')) return;
         try {
+<<<<<<< HEAD
             const response = await fetch(`/api/trainers/${id}`, getFetchOptions('DELETE'));
+=======
+            const response = await fetch(`/api/trainers/${id}`, {
+                method: 'DELETE',
+                credentials: 'same-origin'
+            });
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 
             if (!response.ok) {
                 showStatus('Не удалось удалить тренера', 'error');
@@ -557,7 +640,14 @@
     async function deleteNews(id) {
         if (!confirm('Удалить новость?')) return;
         try {
+<<<<<<< HEAD
             const response = await fetch(`/api/news/${id}`, getFetchOptions('DELETE'));
+=======
+            const response = await fetch(`/api/news/${id}`, {
+                method: 'DELETE',
+                credentials: 'same-origin'
+            });
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 
             if (!response.ok) {
                 showStatus('Не удалось удалить новость', 'error');
@@ -624,7 +714,14 @@
     async function deleteHall(id) {
         if (!confirm('Удалить зал?')) return;
         try {
+<<<<<<< HEAD
             const response = await fetch(`/api/halls/${id}`, getFetchOptions('DELETE'));
+=======
+            const response = await fetch(`/api/halls/${id}`, {
+                method: 'DELETE',
+                credentials: 'same-origin'
+            });
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
             if (!response.ok) {
                 showStatus('Не удалось удалить зал', 'error');
                 return;
@@ -697,7 +794,14 @@
     async function deleteSchedule(id) {
         if (!confirm('Удалить запись расписания?')) return;
         try {
+<<<<<<< HEAD
             const response = await fetch(`/api/schedule/${id}`, getFetchOptions('DELETE'));
+=======
+            const response = await fetch(`/api/schedule/${id}`, {
+                method: 'DELETE',
+                credentials: 'same-origin'
+            });
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
             if (!response.ok) {
                 showStatus('Не удалось удалить запись', 'error');
                 return;
@@ -797,7 +901,10 @@
             year: 'numeric'
         });
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 })();
 
 

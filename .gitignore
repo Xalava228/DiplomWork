@@ -1,5 +1,6 @@
 node_modules/
 .env
+<<<<<<< HEAD
 .env.local
 .env.production
 .DS_Store
@@ -19,3 +20,8 @@ data/*.json
 *~
 .vscode/
 .idea/
+=======
+.DS_Store
+*.log
+.railway/
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095

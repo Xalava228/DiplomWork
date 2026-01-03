@@ -8,7 +8,10 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const multer = require('multer');
 const nodemailer = require('nodemailer');
+<<<<<<< HEAD
 const crypto = require('crypto');
+=======
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 const path = require('path');
 const fs = require('fs');
 const fsPromises = require('fs/promises');
@@ -24,6 +27,7 @@ const HALLS_FILE = path.join(DATA_DIR, 'halls.json');
 const SCHEDULE_FILE = path.join(DATA_DIR, 'schedule.json');
 const CONTACTS_FILE = path.join(DATA_DIR, 'contacts.json');
 const SOCIALS_FILE = path.join(DATA_DIR, 'socials.json');
+<<<<<<< HEAD
 const TELEGRAM_SUBSCRIBERS_FILE = path.join(DATA_DIR, 'telegram_subscribers.json');
 // LEADS_FILE больше не используется - заявки не сохраняются
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
@@ -31,6 +35,12 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 const WHATSAPP_API_KEY = process.env.WHATSAPP_API_KEY;
 const WHATSAPP_PHONE = process.env.WHATSAPP_PHONE;
+=======
+const LEADS_FILE = path.join(DATA_DIR, 'leads.json');
+const UPLOADS_DIR = path.join(__dirname, 'uploads');
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 const SMTP_HOST = process.env.SMTP_HOST;
 const SMTP_PORT = process.env.SMTP_PORT;
 const SMTP_USER = process.env.SMTP_USER;
@@ -49,6 +59,10 @@ const initialHalls = require('./data/halls.json');
 const initialSchedule = require('./data/schedule.json');
 const initialContacts = require('./data/contacts.json');
 const initialSocials = require('./data/socials.json');
+<<<<<<< HEAD
+=======
+const initialLeads = [];
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 
 function resolveAdminPasswordHash() {
     if (ADMIN_PASSWORD_HASH) {
@@ -61,12 +75,17 @@ function resolveAdminPasswordHash() {
 
 const ADMIN_HASH = resolveAdminPasswordHash();
 
+<<<<<<< HEAD
 // Улучшенный санитайзер строк для защиты от XSS
+=======
+// Простой санитайзер строк, чтобы срезать теги и управляемую длину
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 function sanitizeString(value, max = 500) {
     if (typeof value !== 'string') return '';
     const trimmed = value.trim().slice(0, max);
     return trimmed
         .replace(/<script.*?>.*?<\/script>/gi, '')
+<<<<<<< HEAD
         .replace(/<iframe.*?>.*?<\/iframe>/gi, '')
         .replace(/javascript:/gi, '')
         .replace(/on\w+\s*=/gi, '')
@@ -100,15 +119,22 @@ function sanitizeUrl(url, maxLength = 300) {
         return sanitizeString(trimmed, maxLength);
     }
     return '';
+=======
+        .replace(/<\/?[^>]+(>|$)/g, '');
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 }
 
 function sanitizeStringArray(values, max = 100, limit = 20) {
     if (!Array.isArray(values)) return [];
+<<<<<<< HEAD
     // Ограничиваем количество элементов и длину каждого
     return values.slice(0, limit)
         .map(v => sanitizeString(v, max))
         .filter(Boolean)
         .filter(v => v.length > 0 && v.length <= max);
+=======
+    return values.slice(0, limit).map(v => sanitizeString(v, max)).filter(Boolean);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 }
 
 async function ensureDataFile(filePath, defaultValue) {
@@ -124,6 +150,7 @@ async function ensureUploadsDir() {
     await fsPromises.mkdir(UPLOADS_DIR, { recursive: true });
 }
 
+<<<<<<< HEAD
 // Функции для работы с подписчиками Telegram
 async function getTelegramSubscribers() {
     try {
@@ -180,10 +207,23 @@ async function sendTelegramMessage(chatId, message) {
     
     try {
         const response = await fetch(url, {
+=======
+async function notifyTelegram(message) {
+    if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
+    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+    const body = {
+        chat_id: TELEGRAM_CHAT_ID,
+        text: message,
+        parse_mode: 'HTML'
+    };
+    try {
+        await fetch(url, {
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
         });
+<<<<<<< HEAD
         
         const data = await response.json();
         
@@ -277,6 +317,10 @@ async function notifyWhatsApp(message) {
         if (process.env.NODE_ENV !== 'production') {
             console.error('Не удалось отправить в WhatsApp', err);
         }
+=======
+    } catch (err) {
+        console.error('Не удалось отправить в Telegram', err);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
     }
 }
 
@@ -335,11 +379,17 @@ async function notifyEmail(lead) {
         });
         console.log('✅ Email отправлен успешно:', info.messageId);
     } catch (err) {
+<<<<<<< HEAD
         if (process.env.NODE_ENV !== 'production') {
             console.error('❌ Ошибка отправки email:', err.message);
             if (err.code) console.error('   Код ошибки:', err.code);
             if (err.response) console.error('   Ответ сервера:', err.response);
         }
+=======
+        console.error('❌ Ошибка отправки email:', err.message);
+        if (err.code) console.error('   Код ошибки:', err.code);
+        if (err.response) console.error('   Ответ сервера:', err.response);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
     }
 }
 
@@ -350,11 +400,16 @@ async function bootstrapData() {
     await ensureDataFile(SCHEDULE_FILE, initialSchedule);
     await ensureDataFile(CONTACTS_FILE, initialContacts);
     await ensureDataFile(SOCIALS_FILE, initialSocials);
+<<<<<<< HEAD
     await ensureDataFile(TELEGRAM_SUBSCRIBERS_FILE, []);
+=======
+    await ensureDataFile(LEADS_FILE, initialLeads);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
     await ensureUploadsDir();
 }
 
 function requireAdmin(req, res, next) {
+<<<<<<< HEAD
     if (process.env.NODE_ENV !== 'production') {
         console.log('🔐 requireAdmin проверка:', {
             hasSession: !!req.session,
@@ -411,6 +466,14 @@ function validateCSRFToken(req) {
     return isValid;
 }
 
+=======
+    if (req.session && req.session.isAdmin) {
+        return next();
+    }
+    return res.status(401).json({ message: 'Требуется авторизация администратора' });
+}
+
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 async function readJson(filePath) {
     const raw = await fsPromises.readFile(filePath, 'utf8');
     return JSON.parse(raw || '[]');
@@ -462,7 +525,11 @@ app.use(session({
     cookie: {
         httpOnly: true,
         sameSite: 'lax',
+<<<<<<< HEAD
         secure: false, // Для localhost всегда false
+=======
+        secure: process.env.NODE_ENV === 'production',
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         maxAge: 1000 * 60 * 60 * 12 // 12 часов
     }
 }));
@@ -495,6 +562,7 @@ app.use('/data', (_req, res) => res.status(404).json({ message: 'Не найде
 // Раздача статики
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/uploads', express.static(UPLOADS_DIR));
+<<<<<<< HEAD
 
 // robots.txt и sitemap.xml
 app.get('/robots.txt', (_req, res) => {
@@ -511,13 +579,22 @@ app.use(express.static(__dirname));
 const ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
 const ALLOWED_IMAGE_MIMETYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
+=======
+app.use(express.static(__dirname));
+
+// ---------- Загрузка файлов (изображения) ----------
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 const storage = multer.diskStorage({
     destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
     filename: (_req, file, cb) => {
         const ext = (path.extname(file.originalname || '').toLowerCase() || '').slice(0, 5);
+<<<<<<< HEAD
         // Безопасное имя файла - только разрешённые расширения
         const safeExt = ALLOWED_IMAGE_EXTENSIONS.includes(ext) ? ext : '.jpg';
         cb(null, `${Date.now()}-${uuidv4()}${safeExt}`);
+=======
+        cb(null, `${Date.now()}-${uuidv4()}${ext}`);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
     }
 });
 
@@ -525,6 +602,7 @@ const upload = multer({
     storage,
     limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: (_req, file, cb) => {
+<<<<<<< HEAD
         // Проверяем расширение файла
         const ext = path.extname(file.originalname || '').toLowerCase();
         if (!ALLOWED_IMAGE_EXTENSIONS.includes(ext)) {
@@ -537,6 +615,13 @@ const upload = multer({
         }
         
         cb(null, true);
+=======
+        if (file.mimetype && file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE', 'file'));
+        }
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
     }
 });
 
@@ -554,6 +639,7 @@ app.post('/api/login', loginLimiter, async (req, res) => {
     }
 
     req.session.isAdmin = true;
+<<<<<<< HEAD
     // Генерируем CSRF токен при логине
     const token = generateCSRFToken(req);
     
@@ -570,12 +656,19 @@ app.post('/api/login', loginLimiter, async (req, res) => {
         
         return res.json({ ok: true, csrfToken: token });
     });
+=======
+    return res.json({ ok: true });
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 });
 
 app.post('/api/logout', (req, res) => {
     if (req.session) {
         req.session.destroy(() => {
+<<<<<<< HEAD
             res.clearCookie('sambo.sid');
+=======
+            res.clearCookie('connect.sid');
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
             return res.json({ ok: true });
         });
     } else {
@@ -584,6 +677,7 @@ app.post('/api/logout', (req, res) => {
 });
 
 app.get('/api/admin/session', (req, res) => {
+<<<<<<< HEAD
     const isAdmin = Boolean(req.session && req.session.isAdmin);
     const csrfToken = isAdmin ? generateCSRFToken(req) : null;
     
@@ -597,6 +691,9 @@ app.get('/api/admin/session', (req, res) => {
     }
     
     res.json({ isAdmin, csrfToken });
+=======
+    res.json({ isAdmin: Boolean(req.session && req.session.isAdmin) });
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 });
 
 // ---------- Тренеры ----------
@@ -605,19 +702,26 @@ app.get('/api/trainers', async (_req, res) => {
         const trainers = await readJson(TRAINERS_FILE);
         res.json(trainers);
     } catch (error) {
+<<<<<<< HEAD
         if (process.env.NODE_ENV !== 'production') {
             console.error('Ошибка при получении тренеров', error);
         }
+=======
+        console.error('Ошибка при получении тренеров', error);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         res.status(500).json({ message: 'Не удалось загрузить тренеров' });
     }
 });
 
 app.post('/api/trainers', requireAdmin, adminWriteLimiter, async (req, res) => {
+<<<<<<< HEAD
     // CSRF защита
     if (!validateCSRFToken(req)) {
         return res.status(403).json({ message: 'Неверный CSRF токен' });
     }
     
+=======
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
     const { name, position, experience, badges, photoUrl } = req.body || {};
 
     if (!name || !position) {
@@ -638,7 +742,11 @@ app.post('/api/trainers', requireAdmin, adminWriteLimiter, async (req, res) => {
         position: sanitizeString(position, 120),
         experience: sanitizeString(experience || '', 120),
         badges: parsedBadges.map(b => sanitizeString(b, 80)),
+<<<<<<< HEAD
         photoUrl: photoUrl && typeof photoUrl === 'string' ? sanitizeUrl(photoUrl, 300) : ''
+=======
+        photoUrl: photoUrl && typeof photoUrl === 'string' ? sanitizeString(photoUrl, 300) : ''
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
     };
 
     try {
@@ -647,14 +755,19 @@ app.post('/api/trainers', requireAdmin, adminWriteLimiter, async (req, res) => {
         await writeJson(TRAINERS_FILE, trainers);
         res.status(201).json(trainer);
     } catch (error) {
+<<<<<<< HEAD
         if (process.env.NODE_ENV !== 'production') {
             console.error('Ошибка при добавлении тренера', error);
         }
+=======
+        console.error('Ошибка при добавлении тренера', error);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         res.status(500).json({ message: 'Не удалось сохранить тренера' });
     }
 });
 
 app.delete('/api/trainers/:id', requireAdmin, adminWriteLimiter, async (req, res) => {
+<<<<<<< HEAD
     // CSRF защита
     if (!validateCSRFToken(req)) {
         return res.status(403).json({ message: 'Неверный CSRF токен' });
@@ -666,6 +779,9 @@ app.delete('/api/trainers/:id', requireAdmin, adminWriteLimiter, async (req, res
     if (!id || typeof id !== 'string' || id.length > 100) {
         return res.status(400).json({ message: 'Некорректный ID' });
     }
+=======
+    const { id } = req.params;
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 
     try {
         const trainers = await readJson(TRAINERS_FILE);
@@ -678,9 +794,13 @@ app.delete('/api/trainers/:id', requireAdmin, adminWriteLimiter, async (req, res
         await writeJson(TRAINERS_FILE, updated);
         res.json({ ok: true });
     } catch (error) {
+<<<<<<< HEAD
         if (process.env.NODE_ENV !== 'production') {
             console.error('Ошибка при удалении тренера', error);
         }
+=======
+        console.error('Ошибка при удалении тренера', error);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         res.status(500).json({ message: 'Не удалось удалить тренера' });
     }
 });
@@ -691,19 +811,26 @@ app.get('/api/news', async (_req, res) => {
         const news = await readJson(NEWS_FILE);
         res.json(news);
     } catch (error) {
+<<<<<<< HEAD
         if (process.env.NODE_ENV !== 'production') {
             console.error('Ошибка при получении новостей', error);
         }
+=======
+        console.error('Ошибка при получении новостей', error);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         res.status(500).json({ message: 'Не удалось загрузить новости' });
     }
 });
 
 app.post('/api/news', requireAdmin, adminWriteLimiter, async (req, res) => {
+<<<<<<< HEAD
     // CSRF защита
     if (!validateCSRFToken(req)) {
         return res.status(403).json({ message: 'Неверный CSRF токен' });
     }
     
+=======
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
     const { date, category, text, imageUrl, title } = req.body || {};
 
     if (!date || !category || !text) {
@@ -721,7 +848,11 @@ app.post('/api/news', requireAdmin, adminWriteLimiter, async (req, res) => {
         category: sanitizeString(category, 120),
         text: sanitizeString(text, 1000),
         title: sanitizeString(title || '', 200),
+<<<<<<< HEAD
         imageUrl: imageUrl && typeof imageUrl === 'string' ? sanitizeUrl(imageUrl, 300) : ''
+=======
+        imageUrl: imageUrl && typeof imageUrl === 'string' ? sanitizeString(imageUrl, 300) : ''
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
     };
 
     try {
@@ -730,14 +861,19 @@ app.post('/api/news', requireAdmin, adminWriteLimiter, async (req, res) => {
         await writeJson(NEWS_FILE, news);
         res.status(201).json(newsItem);
     } catch (error) {
+<<<<<<< HEAD
         if (process.env.NODE_ENV !== 'production') {
             console.error('Ошибка при добавлении новости', error);
         }
+=======
+        console.error('Ошибка при добавлении новости', error);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         res.status(500).json({ message: 'Не удалось сохранить новость' });
     }
 });
 
 app.delete('/api/news/:id', requireAdmin, adminWriteLimiter, async (req, res) => {
+<<<<<<< HEAD
     // CSRF защита
     if (!validateCSRFToken(req)) {
         return res.status(403).json({ message: 'Неверный CSRF токен' });
@@ -749,6 +885,9 @@ app.delete('/api/news/:id', requireAdmin, adminWriteLimiter, async (req, res) =>
     if (!id || typeof id !== 'string' || id.length > 100) {
         return res.status(400).json({ message: 'Некорректный ID' });
     }
+=======
+    const { id } = req.params;
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 
     try {
         const news = await readJson(NEWS_FILE);
@@ -761,9 +900,13 @@ app.delete('/api/news/:id', requireAdmin, adminWriteLimiter, async (req, res) =>
         await writeJson(NEWS_FILE, updated);
         res.json({ ok: true });
     } catch (error) {
+<<<<<<< HEAD
         if (process.env.NODE_ENV !== 'production') {
             console.error('Ошибка при удалении новости', error);
         }
+=======
+        console.error('Ошибка при удалении новости', error);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         res.status(500).json({ message: 'Не удалось удалить новость' });
     }
 });
@@ -774,19 +917,26 @@ app.get('/api/halls', async (_req, res) => {
         const halls = await readJson(HALLS_FILE);
         res.json(halls);
     } catch (error) {
+<<<<<<< HEAD
         if (process.env.NODE_ENV !== 'production') {
             console.error('Ошибка при получении залов', error);
         }
+=======
+        console.error('Ошибка при получении залов', error);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         res.status(500).json({ message: 'Не удалось загрузить залы' });
     }
 });
 
 app.post('/api/halls', requireAdmin, adminWriteLimiter, async (req, res) => {
+<<<<<<< HEAD
     // CSRF защита
     if (!validateCSRFToken(req)) {
         return res.status(403).json({ message: 'Неверный CSRF токен' });
     }
     
+=======
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
     const { name, address, description, imageUrl } = req.body || {};
 
     if (!name || !address) {
@@ -798,7 +948,11 @@ app.post('/api/halls', requireAdmin, adminWriteLimiter, async (req, res) => {
         name: sanitizeString(name, 160),
         address: sanitizeString(address, 200),
         description: sanitizeString(description || '', 500),
+<<<<<<< HEAD
         imageUrl: imageUrl && typeof imageUrl === 'string' ? sanitizeUrl(imageUrl, 300) : ''
+=======
+        imageUrl: imageUrl && typeof imageUrl === 'string' ? sanitizeString(imageUrl, 300) : ''
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
     };
 
     try {
@@ -807,14 +961,19 @@ app.post('/api/halls', requireAdmin, adminWriteLimiter, async (req, res) => {
         await writeJson(HALLS_FILE, halls);
         res.status(201).json(hall);
     } catch (error) {
+<<<<<<< HEAD
         if (process.env.NODE_ENV !== 'production') {
             console.error('Ошибка при добавлении зала', error);
         }
+=======
+        console.error('Ошибка при добавлении зала', error);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         res.status(500).json({ message: 'Не удалось сохранить зал' });
     }
 });
 
 app.delete('/api/halls/:id', requireAdmin, adminWriteLimiter, async (req, res) => {
+<<<<<<< HEAD
     // CSRF защита
     if (!validateCSRFToken(req)) {
         return res.status(403).json({ message: 'Неверный CSRF токен' });
@@ -826,6 +985,9 @@ app.delete('/api/halls/:id', requireAdmin, adminWriteLimiter, async (req, res) =
     if (!id || typeof id !== 'string' || id.length > 100) {
         return res.status(400).json({ message: 'Некорректный ID' });
     }
+=======
+    const { id } = req.params;
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 
     try {
         const halls = await readJson(HALLS_FILE);
@@ -838,9 +1000,13 @@ app.delete('/api/halls/:id', requireAdmin, adminWriteLimiter, async (req, res) =
         await writeJson(HALLS_FILE, updated);
         res.json({ ok: true });
     } catch (error) {
+<<<<<<< HEAD
         if (process.env.NODE_ENV !== 'production') {
             console.error('Ошибка при удалении зала', error);
         }
+=======
+        console.error('Ошибка при удалении зала', error);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         res.status(500).json({ message: 'Не удалось удалить зал' });
     }
 });
@@ -854,19 +1020,26 @@ app.get('/api/schedule', async (_req, res) => {
         const schedule = await readJson(SCHEDULE_FILE);
         res.json(schedule);
     } catch (error) {
+<<<<<<< HEAD
         if (process.env.NODE_ENV !== 'production') {
             console.error('Ошибка при получении расписания', error);
         }
+=======
+        console.error('Ошибка при получении расписания', error);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         res.status(500).json({ message: 'Не удалось загрузить расписание' });
     }
 });
 
 app.post('/api/schedule', requireAdmin, adminWriteLimiter, async (req, res) => {
+<<<<<<< HEAD
     // CSRF защита
     if (!validateCSRFToken(req)) {
         return res.status(403).json({ message: 'Неверный CSRF токен' });
     }
     
+=======
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
     const { day, time, label, type, hall } = req.body || {};
 
     if (!day || !time || !label) {
@@ -893,14 +1066,19 @@ app.post('/api/schedule', requireAdmin, adminWriteLimiter, async (req, res) => {
         await writeJson(SCHEDULE_FILE, schedule);
         res.status(201).json(slot);
     } catch (error) {
+<<<<<<< HEAD
         if (process.env.NODE_ENV !== 'production') {
             console.error('Ошибка при добавлении записи расписания', error);
         }
+=======
+        console.error('Ошибка при добавлении записи расписания', error);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         res.status(500).json({ message: 'Не удалось сохранить расписание' });
     }
 });
 
 app.delete('/api/schedule/:id', requireAdmin, adminWriteLimiter, async (req, res) => {
+<<<<<<< HEAD
     // CSRF защита
     if (!validateCSRFToken(req)) {
         return res.status(403).json({ message: 'Неверный CSRF токен' });
@@ -912,6 +1090,9 @@ app.delete('/api/schedule/:id', requireAdmin, adminWriteLimiter, async (req, res
     if (!id || typeof id !== 'string' || id.length > 100) {
         return res.status(400).json({ message: 'Некорректный ID' });
     }
+=======
+    const { id } = req.params;
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 
     try {
         const schedule = await readJson(SCHEDULE_FILE);
@@ -924,9 +1105,13 @@ app.delete('/api/schedule/:id', requireAdmin, adminWriteLimiter, async (req, res
         await writeJson(SCHEDULE_FILE, updated);
         res.json({ ok: true });
     } catch (error) {
+<<<<<<< HEAD
         if (process.env.NODE_ENV !== 'production') {
             console.error('Ошибка при удалении записи расписания', error);
         }
+=======
+        console.error('Ошибка при удалении записи расписания', error);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         res.status(500).json({ message: 'Не удалось удалить запись' });
     }
 });
@@ -937,9 +1122,13 @@ app.get('/api/contacts', async (_req, res) => {
         const contacts = await readJson(CONTACTS_FILE);
         res.json(contacts);
     } catch (error) {
+<<<<<<< HEAD
         if (process.env.NODE_ENV !== 'production') {
             console.error('Ошибка при получении контактов', error);
         }
+=======
+        console.error('Ошибка при получении контактов', error);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         res.status(500).json({ message: 'Не удалось загрузить контакты' });
     }
 });
@@ -951,6 +1140,7 @@ app.post('/api/leads', contactLimiter, async (req, res) => {
     if (!name || !phone) {
         return res.status(400).json({ message: 'Имя и телефон обязательны' });
     }
+<<<<<<< HEAD
     
     // Дополнительная валидация на сервере
     const phoneRegex = /^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$/;
@@ -963,6 +1153,8 @@ app.post('/api/leads', contactLimiter, async (req, res) => {
     if (!nameRegex.test(name)) {
         return res.status(400).json({ message: 'Некорректный формат имени' });
     }
+=======
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 
     const lead = {
         id: uuidv4(),
@@ -973,6 +1165,7 @@ app.post('/api/leads', contactLimiter, async (req, res) => {
     };
 
     try {
+<<<<<<< HEAD
         // Формируем сообщение
         const text = [
             '📨 *Новая заявка*',
@@ -982,11 +1175,15 @@ app.post('/api/leads', contactLimiter, async (req, res) => {
         ].filter(Boolean).join('\n');
         
         const telegramText = [
+=======
+        const text = [
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
             '📨 <b>Новая заявка</b>',
             `Имя: ${lead.name}`,
             `Телефон: ${lead.phone}`,
             lead.message ? `Сообщение: ${lead.message}` : ''
         ].filter(Boolean).join('\n');
+<<<<<<< HEAD
         
         // Отправляем уведомления (не сохраняем на сервере)
         const notifications = [];
@@ -1023,11 +1220,24 @@ app.post('/api/leads', contactLimiter, async (req, res) => {
         if (process.env.NODE_ENV !== 'production') {
             console.error('Ошибка при отправке заявки', error);
         }
+=======
+        await notifyTelegram(text);
+        await notifyEmail(lead);
+
+        const leads = await readJson(LEADS_FILE);
+        leads.unshift(lead);
+        leads.splice(200);
+        await writeJson(LEADS_FILE, leads);
+        return res.json({ ok: true });
+    } catch (error) {
+        console.error('Ошибка при сохранении заявки', error);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         return res.status(500).json({ message: 'Не удалось отправить заявку' });
     }
 });
 
 // ---------- Загрузка изображений ----------
+<<<<<<< HEAD
 app.post('/api/upload', requireAdmin, adminWriteLimiter, (req, res, next) => {
     // CSRF защита
     if (!validateCSRFToken(req)) {
@@ -1046,10 +1256,17 @@ app.post('/api/upload', requireAdmin, adminWriteLimiter, (req, res, next) => {
         return res.status(400).json({ message: 'Файл слишком большой (максимум 5MB)' });
     }
     
+=======
+app.post('/api/upload', requireAdmin, adminWriteLimiter, upload.single('file'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ message: 'Файл не получен' });
+    }
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
     const url = `/uploads/${req.file.filename}`;
     return res.json({ url });
 });
 
+<<<<<<< HEAD
 // Обработка ошибок загрузки файлов
 app.use((err, req, res, next) => {
     if (err instanceof multer.MulterError) {
@@ -1070,6 +1287,9 @@ app.post('/api/contacts', requireAdmin, adminWriteLimiter, async (req, res) => {
         return res.status(403).json({ message: 'Неверный CSRF токен' });
     }
     
+=======
+app.post('/api/contacts', requireAdmin, adminWriteLimiter, async (req, res) => {
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
     const { address, phones, email } = req.body || {};
 
     const payload = {
@@ -1086,29 +1306,41 @@ app.post('/api/contacts', requireAdmin, adminWriteLimiter, async (req, res) => {
         await writeJson(CONTACTS_FILE, payload);
         res.json(payload);
     } catch (error) {
+<<<<<<< HEAD
         if (process.env.NODE_ENV !== 'production') {
             console.error('Ошибка при сохранении контактов', error);
         }
+=======
+        console.error('Ошибка при сохранении контактов', error);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         res.status(500).json({ message: 'Не удалось сохранить контакты' });
     }
 });
 
+<<<<<<< HEAD
 // Заявки больше не сохраняются на сервере - только отправляются в Telegram/WhatsApp
 
+=======
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 // ---------- Соцсети ----------
 app.get('/api/socials', async (_req, res) => {
     try {
         const socials = await readJson(SOCIALS_FILE);
         res.json(socials);
     } catch (error) {
+<<<<<<< HEAD
         if (process.env.NODE_ENV !== 'production') {
             console.error('Ошибка при получении ссылок', error);
         }
+=======
+        console.error('Ошибка при получении ссылок', error);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         res.status(500).json({ message: 'Не удалось загрузить ссылки' });
     }
 });
 
 app.post('/api/socials', requireAdmin, adminWriteLimiter, async (req, res) => {
+<<<<<<< HEAD
     // CSRF защита
     if (!validateCSRFToken(req)) {
         return res.status(403).json({ message: 'Неверный CSRF токен' });
@@ -1120,19 +1352,32 @@ app.post('/api/socials', requireAdmin, adminWriteLimiter, async (req, res) => {
         vk: sanitizeUrl(vk || '', 240),
         telegram: sanitizeUrl(telegram || '', 240),
         instagram: sanitizeUrl(instagram || '', 240)
+=======
+    const { vk, telegram, instagram } = req.body || {};
+
+    const payload = {
+        vk: sanitizeString(vk || '', 240),
+        telegram: sanitizeString(telegram || '', 240),
+        instagram: sanitizeString(instagram || '', 240)
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
     };
 
     try {
         await writeJson(SOCIALS_FILE, payload);
         res.json(payload);
     } catch (error) {
+<<<<<<< HEAD
         if (process.env.NODE_ENV !== 'production') {
             console.error('Ошибка при сохранении ссылок', error);
         }
+=======
+        console.error('Ошибка при сохранении ссылок', error);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         res.status(500).json({ message: 'Не удалось сохранить ссылки' });
     }
 });
 
+<<<<<<< HEAD
 // ---------- Тест отправки в Telegram (для отладки) ----------
 app.get('/api/test-telegram', requireAdmin, async (_req, res) => {
     if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
@@ -1177,6 +1422,8 @@ app.get('/health', async (_req, res) => {
     }
 });
 
+=======
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
 // ---------- Страницы ----------
 app.get('/admin', (_req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
@@ -1190,6 +1437,7 @@ app.get('*', (req, res) => {
     return res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+<<<<<<< HEAD
 // Проверка настроек Telegram при старте
 async function logTelegramStatus() {
     if (TELEGRAM_BOT_TOKEN) {
@@ -1302,6 +1550,12 @@ bootstrapData()
         app.listen(PORT, () => {
             console.log(`Сервер запущен на порту ${PORT}`);
             startTelegramPolling();
+=======
+bootstrapData()
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(`Сервер запущен на порту ${PORT}`);
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
         });
     })
     .catch((err) => {

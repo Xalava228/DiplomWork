@@ -464,6 +464,7 @@
             socialsWrapper.querySelectorAll('.social-link').forEach(link => {
                 const key = link.dataset.social;
                 const href = socials[key] || '';
+<<<<<<< HEAD
                 
                 if (href && href.trim() !== '') {
                     link.href = href;
@@ -475,6 +476,13 @@
                 } else {
                     link.style.display = 'none';
                 }
+=======
+                link.href = href || '#';
+                link.style.opacity = href ? '1' : '0.4';
+                link.setAttribute('aria-disabled', href ? 'false' : 'true');
+                link.target = href ? '_blank' : '_self';
+                link.rel = 'noopener';
+>>>>>>> 7419140d94d7ec7d9329010ddae9bc4fc889d095
             });
         } catch (error) {
             console.error(error);
